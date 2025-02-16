@@ -85,30 +85,22 @@ void loadDungeon(char *filename) {
     player_x = (int) pos[0];
     player_y = (int) pos[1];
 
+    // Restore dungeon structure based on hardness
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             fread(&hardness[i][j], 1, 1, file);
+
             if (hardness[i][j] == 0) {
-                dungeon[i][j] = CORRIDOR;
+                dungeon[i][j] = CORRIDOR;  // Floors
+            } else if (hardness[i][j] == 255) {
+                dungeon[i][j] = ROCK;      // Solid rock
             } else {
-                dungeon[i][j] = ROCK;
+                dungeon[i][j] = '#';       // Partially dug-out areas (corridors)
             }
         }
     }
 
-    for (int i = 1; i < WIDTH - 1; i++) {
-        dungeon[0][i] = '-';
-        dungeon[HEIGHT - 1][i] = '-';
-    }
-    for (int i = 1; i < HEIGHT - 1; i++) {
-        dungeon[i][0] = '|';
-        dungeon[i][WIDTH - 1] = '|';
-    }
-    dungeon[0][0] = CORNER;
-    dungeon[0][WIDTH - 1] = '+';
-    dungeon[HEIGHT - 1][0] = '+';
-    dungeon[HEIGHT - 1][WIDTH - 1] = '+';
-
+    // Restore room structure
     uint16_t r;
     fread(&r, 2, 1, file);
     r = be16toh(r);
@@ -121,14 +113,16 @@ void loadDungeon(char *filename) {
         fread(&rooms[i].height, 1, 1, file);
     }
 
+    // Restore rooms
     for (int i = 0; i < num_rooms; i++) {
         for (int j = rooms[i].y; j < rooms[i].y + rooms[i].height; j++) {
             for (int k = rooms[i].x; k < rooms[i].x + rooms[i].width; k++) {
-                dungeon[j][k] = FLOOR;
+                dungeon[j][k] = FLOOR;  // Rooms should be floor tiles
             }
         }
     }
 
+    // Restore stairs
     uint16_t up_stairs_count;
     fread(&up_stairs_count, 2, 1, file);
     up_stairs_count = be16toh(up_stairs_count);
@@ -151,6 +145,7 @@ void loadDungeon(char *filename) {
         dungeon[y][x] = STAIR_DOWN;
     }
 
+    // Place the player
     dungeon[player_y][player_x] = '@';
 
     printf("Dungeon loaded from %s\n", dungeon_file);
