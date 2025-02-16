@@ -88,26 +88,40 @@ void loadDungeon(char *filename) {
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             fread(&hardness[i][j], 1, 1, file);
+            if (hardness[i][j] == 0) {
+                dungeon[i][j] = CORRIDOR;
+            } else {
+                dungeon[i][j] = ROCK;
+            }
         }
     }
 
-    uint16_t r = 0;
+    for (int i = 1; i < WIDTH - 1; i++) {
+        dungeon[0][i] = '-';
+        dungeon[HEIGHT - 1][i] = '-';
+    }
+    for (int i = 1; i < HEIGHT - 1; i++) {
+        dungeon[i][0] = '|';
+        dungeon[i][WIDTH - 1] = '|';
+    }
+    dungeon[0][0] = CORNER;
+    dungeon[0][WIDTH - 1] = '+';
+    dungeon[HEIGHT - 1][0] = '+';
+    dungeon[HEIGHT - 1][WIDTH - 1] = '+';
+
+    uint16_t r;
     fread(&r, 2, 1, file);
     r = be16toh(r);
     num_rooms = r;
 
-    struct Room *rooms = malloc(r * sizeof(struct Room));
-    if (!rooms) {
-        fprintf(stderr, "Memory allocation failed for rooms\n");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 0; i < r; i++) {
+    for (int i = 0; i < num_rooms; i++) {
         fread(&rooms[i].x, 1, 1, file);
         fread(&rooms[i].y, 1, 1, file);
         fread(&rooms[i].width, 1, 1, file);
         fread(&rooms[i].height, 1, 1, file);
     }
-    for (int i = 0; i < r; i++) {
+
+    for (int i = 0; i < num_rooms; i++) {
         for (int j = rooms[i].y; j < rooms[i].y + rooms[i].height; j++) {
             for (int k = rooms[i].x; k < rooms[i].x + rooms[i].width; k++) {
                 dungeon[j][k] = FLOOR;
@@ -115,13 +129,29 @@ void loadDungeon(char *filename) {
         }
     }
 
-    uint16_t u;
-    fread(&u, 2, 1, file);
-    u = be16toh(u);
+    uint16_t up_stairs_count;
+    fread(&up_stairs_count, 2, 1, file);
+    up_stairs_count = be16toh(up_stairs_count);
 
-    uint16_t d;
-    fread(&d, 2, 1, file);
-    d = be16toh(d);
+    for (int i = 0; i < up_stairs_count; i++) {
+        uint8_t x, y;
+        fread(&x, 1, 1, file);
+        fread(&y, 1, 1, file);
+        dungeon[y][x] = STAIR_UP;
+    }
+
+    uint16_t down_stairs_count;
+    fread(&down_stairs_count, 2, 1, file);
+    down_stairs_count = be16toh(down_stairs_count);
+
+    for (int i = 0; i < down_stairs_count; i++) {
+        uint8_t x, y;
+        fread(&x, 1, 1, file);
+        fread(&y, 1, 1, file);
+        dungeon[y][x] = STAIR_DOWN;
+    }
+
+    dungeon[player_y][player_x] = '@';
 
     printf("Dungeon loaded from %s\n", dungeon_file);
     fclose(file);
