@@ -1,8 +1,11 @@
 #include "dungeon_generation.h"
+#include <stdio.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
     int load = 0, save = 0;
+    char *filename = "dungeon";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--save") == 0) {
@@ -13,7 +16,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (load) {
-        loadDungeon();
+        loadDungeon(filename);
     } else {
         emptyDungeon();
         int countRooms = createRooms();
@@ -25,7 +28,7 @@ int main(int argc, char *argv[]) {
     printDungeon();
 
     if (save) {
-        saveDungeon();
+        saveDungeon(filename);
     }
 
     return 0;

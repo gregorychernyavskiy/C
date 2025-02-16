@@ -3,9 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <endian.h>
 #include <time.h>
 
 #define WIDTH 80
@@ -22,6 +19,13 @@
 
 #define MAX_HARDNESS 255
 #define MIN_HARDNESS 1
+
+#define CORRIDOR '#'
+#define ROCK ' '
+#define CORNER '+'
+#define FLOOR '.'
+#define STAIR_UP '<'
+#define STAIR_DOWN '>'
 
 extern char dungeon[HEIGHT][WIDTH];
 extern unsigned char hardness[HEIGHT][WIDTH];
@@ -46,7 +50,7 @@ void placeStairs(int countRooms);
 void placePlayer(int countRooms);
 void initializeHardness();
 void printHardness();
-void saveDungeon();
-void loadDungeon();
+void saveDungeon(char *filename);
+void loadDungeon(char *filename);
 
 #endif
