@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <string.h>
+#include <stdint.h>
+#include <endian.h>
 
 #define WIDTH 80
 #define HEIGHT 21

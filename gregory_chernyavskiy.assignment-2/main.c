@@ -1,6 +1,4 @@
 #include "dungeon_generation.h"
-#include <stdio.h>
-#include <string.h>
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
