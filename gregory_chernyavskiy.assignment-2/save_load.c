@@ -1,9 +1,10 @@
-#include "dungeon_generation.h"
-#include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <endian.h>
+
+#include "dungeon_generation.h"
 
 char *dungeon_file = NULL;
 
@@ -14,15 +15,13 @@ void setupDungeonFile(const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    // Allocate memory for the dungeon file path
     int dungeon_file_length = strlen(home) + strlen("/.rlg327/") + strlen(filename) + 1;
-    dungeon_file = malloc(dungeon_file_length * sizeof(*dungeon_file));
+    dungeon_file = malloc(dungeon_file_length);
     if (!dungeon_file) {
         perror("Memory allocation failed for dungeon_file");
         exit(EXIT_FAILURE);
     }
 
-    // Construct the full path
     strcpy(dungeon_file, home);
     strcat(dungeon_file, "/.rlg327/");
     strcat(dungeon_file, filename);
@@ -38,11 +37,11 @@ void saveDungeon() {
     }
 
     fwrite("RLG327-S2025", 1, 12, file);
-    
+
     uint32_t version = htobe32(0);
     fwrite(&version, 4, 1, file);
 
-    uint32_t size = htobe32(1708 + MAX_ROOMS * 4);
+    uint32_t size = htobe32(1708 + num_rooms * 4);
     fwrite(&size, 4, 1, file);
 
     uint8_t pos[2] = {player_x, player_y};
@@ -94,7 +93,11 @@ void loadDungeon() {
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
             fread(&hardness[y][x], 1, 1, file);
-            dungeon[y][x] = (hardness[y][x] == 0) ? '.' : ' ';
+            if (hardness[y][x] == 0) {
+                dungeon[y][x] = '.';
+            } else {
+                dungeon[y][x] = ' ';
+            }
         }
     }
 
@@ -108,6 +111,16 @@ void loadDungeon() {
         fread(&rooms[i].width, 1, 1, file);
         fread(&rooms[i].height, 1, 1, file);
     }
+
+    for (int i = 0; i < num_rooms; i++) {
+        for (int y = rooms[i].y; y < rooms[i].y + rooms[i].height; y++) {
+            for (int x = rooms[i].x; x < rooms[i].x + rooms[i].width; x++) {
+                dungeon[y][x] = '.';
+            }
+        }
+    }
+
+    dungeon[player_y][player_x] = '@';
 
     fclose(file);
     printf("Dungeon loaded from %s\n", dungeon_file);
