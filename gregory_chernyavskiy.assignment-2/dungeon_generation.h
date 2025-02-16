@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <endian.h>
+#include <time.h>
 
 #define WIDTH 80
 #define HEIGHT 21
