@@ -31,8 +31,8 @@ struct Room {
 };
 
 extern struct Room rooms[MAX_ROOMS];
-extern int num_rooms;  // Added to track number of rooms
-extern int player_x, player_y;  // Added for player position
+extern int num_rooms;
+extern int player_x, player_y;
 
 void printDungeon();
 void emptyDungeon();
