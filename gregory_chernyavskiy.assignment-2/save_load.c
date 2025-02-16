@@ -85,10 +85,15 @@ void loadDungeon(char *filename) {
     player_x = (int) pos[0];
     player_y = (int) pos[1];
 
-    // Restore dungeon structure based on hardness
+    // Load and debug hardness values
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             fread(&hardness[i][j], 1, 1, file);
+
+            // Debug: Print hardness for first few tiles
+            if (i < 5 && j < 5) {
+                printf("DEBUG: hardness[%d][%d] = %d\n", i, j, hardness[i][j]);
+            }
 
             if (hardness[i][j] == 0) {
                 dungeon[i][j] = CORRIDOR;  // Floors
@@ -100,29 +105,39 @@ void loadDungeon(char *filename) {
         }
     }
 
-    // Restore room structure
+    // Load and debug room structure
     uint16_t r;
     fread(&r, 2, 1, file);
     r = be16toh(r);
     num_rooms = r;
+
+    printf("DEBUG: Loaded room count = %d\n", num_rooms);
 
     for (int i = 0; i < num_rooms; i++) {
         fread(&rooms[i].x, 1, 1, file);
         fread(&rooms[i].y, 1, 1, file);
         fread(&rooms[i].width, 1, 1, file);
         fread(&rooms[i].height, 1, 1, file);
+
+        printf("DEBUG: Room %d -> x: %d, y: %d, w: %d, h: %d\n",
+               i, rooms[i].x, rooms[i].y, rooms[i].width, rooms[i].height);
     }
 
-    // Restore rooms
+    // Restore rooms in the dungeon
     for (int i = 0; i < num_rooms; i++) {
         for (int j = rooms[i].y; j < rooms[i].y + rooms[i].height; j++) {
             for (int k = rooms[i].x; k < rooms[i].x + rooms[i].width; k++) {
-                dungeon[j][k] = FLOOR;  // Rooms should be floor tiles
+                dungeon[j][k] = FLOOR;
+
+                // Debug: Print floor placement
+                if (i < 3) {  // Print for first 3 rooms
+                    printf("DEBUG: Setting dungeon[%d][%d] = '.'\n", j, k);
+                }
             }
         }
     }
 
-    // Restore stairs
+    // Load and restore stairs
     uint16_t up_stairs_count;
     fread(&up_stairs_count, 2, 1, file);
     up_stairs_count = be16toh(up_stairs_count);
