@@ -2,8 +2,8 @@
 
 int main(void) {
     srand(time(NULL));
+
     emptyDungeon();
-    initializeHardness();
 
     int countRooms = createRooms();
     connectRooms(countRooms);
@@ -11,7 +11,9 @@ int main(void) {
     placePlayer(countRooms);
 
     printDungeon();
-    printf("\n");
-    printHardness();
+
+    saveDungeon();
+    loadDungeon();
+
     return 0;
 }

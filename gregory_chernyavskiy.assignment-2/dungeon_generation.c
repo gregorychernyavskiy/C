@@ -1,8 +1,10 @@
 #include "dungeon_generation.h"
 
+int player_x, player_y;
+int num_rooms = 0;
+
 char dungeon[HEIGHT][WIDTH];
 unsigned char hardness[HEIGHT][WIDTH];
-
 struct Room rooms[MAX_ROOMS];
 
 
@@ -127,39 +129,8 @@ void placeStairs(int countRooms) {
 void placePlayer(int countRooms) {
     int index = rand() % countRooms;
     struct Room playerRoom = rooms[index];
-    
-    int x = playerRoom.x + rand() % playerRoom.width;
-    int y = playerRoom.y + rand() % playerRoom.height;
-    dungeon[y][x] = '@';
-}
 
-
-void initializeHardness() {
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            if (x == 0 || x == WIDTH - 1 || y == 0 || y == HEIGHT - 1) {
-                hardness[y][x] = MAX_HARDNESS; // Immutable rock (walls)
-            } else if (dungeon[y][x] == '.' || dungeon[y][x] == '<' || dungeon[y][x] == '>' || dungeon[y][x] == '@' || dungeon[y][x] == '#') {
-                hardness[y][x] = 0; // Open space (rooms, corridors, stairs, player)
-            } else {
-                hardness[y][x] = 1 + rand() % 254;
-            }
-        }
-    }
-}
-
-
-void printHardness() {
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            if (hardness[y][x] == MAX_HARDNESS) {
-                printf("*");  // Walls (255)
-            } else if (hardness[y][x] == 0) {
-                printf(" ");  // Open space (0)
-            } else {
-                printf(".");
-            }
-        }
-        printf("\n");
-    }
+    player_x = playerRoom.x + rand() % playerRoom.width;
+    player_y = playerRoom.y + rand() % playerRoom.height;
+    dungeon[player_y][player_x] = '@';
 }

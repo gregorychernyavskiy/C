@@ -1,14 +1,20 @@
 CC = gcc
-CFLAGS = -Wall -Werror
+CFLAGS = -Wall -Wextra -g
+OBJ = main.o dungeon_generation.o save_load.o
 
-dungeon: main.o dungeon_generation.o
-	$(CC) main.o dungeon_generation.o -o dungeon $(CFLAGS) -lm
+all: dungeon
+
+dungeon: $(OBJ)
+	$(CC) $(CFLAGS) -o dungeon $(OBJ)
 
 main.o: main.c dungeon_generation.h
-	$(CC) -c main.c -o main.o $(CFLAGS)
+	$(CC) $(CFLAGS) -c main.c
 
 dungeon_generation.o: dungeon_generation.c dungeon_generation.h
-	$(CC) -c dungeon_generation.c -o dungeon_generation.o $(CFLAGS)
+	$(CC) $(CFLAGS) -c dungeon_generation.c
+
+save_load.o: save_load.c dungeon_generation.h
+	$(CC) $(CFLAGS) -c save_load.c
 
 clean:
-	rm -f dungeon *.o *~
+	rm -f dungeon $(OBJ)

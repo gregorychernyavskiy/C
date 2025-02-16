@@ -1,7 +1,6 @@
 #ifndef DUNGEON_GENERATION_H
 #define DUNGEON_GENERATION_H
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -22,17 +21,18 @@
 #define MIN_HARDNESS 1
 
 extern char dungeon[HEIGHT][WIDTH];
-
 extern unsigned char hardness[HEIGHT][WIDTH];
 
 struct Room {
-    int x; 
+    int x;
     int y;
     int height;
     int width;
 };
 
 extern struct Room rooms[MAX_ROOMS];
+extern int num_rooms;  // Added to track number of rooms
+extern int player_x, player_y;  // Added for player position
 
 void printDungeon();
 void emptyDungeon();
@@ -43,5 +43,7 @@ void placeStairs(int countRooms);
 void placePlayer(int countRooms);
 void initializeHardness();
 void printHardness();
+void saveDungeon();
+void loadDungeon();
 
 #endif
