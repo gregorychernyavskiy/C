@@ -4,9 +4,8 @@
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
-    int load = 0, save = 0; // Flags for --load and --save
+    int load = 0, save = 0;
 
-    // Check command-line arguments
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--save") == 0) {
             save = 1;
@@ -16,10 +15,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (load) {
-        // If --load is provided, load the dungeon from file
         loadDungeon();
     } else {
-        // If no --load, generate a new dungeon
         emptyDungeon();
         int countRooms = createRooms();
         connectRooms(countRooms);
@@ -27,11 +24,9 @@ int main(int argc, char *argv[]) {
         placePlayer(countRooms);
     }
 
-    // Print the dungeon after loading or generating
     printDungeon();
 
     if (save) {
-        // If --save is provided, save the dungeon to file
         saveDungeon();
     }
 
